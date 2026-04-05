@@ -35,8 +35,8 @@ def sample_reparameterize(mean, std):
     #######################
     # PUT YOUR CODE HERE  #
     #######################
-    z = None
-    raise NotImplementedError
+    eps = torch.randn_like(std)
+    z = mean + std * eps
     #######################
     # END OF YOUR CODE    #
     #######################
@@ -58,8 +58,7 @@ def KLD(mean, log_std):
     #######################
     # PUT YOUR CODE HERE  #
     #######################
-    KLD = None
-    raise NotImplementedError
+    KLD = -0.5 * torch.sum(1 + 2*log_std - mean.pow(2) -(2*log_std).exp(), dim=-1) # 2*log_std = ln(sigma^2)
     #######################
     # END OF YOUR CODE    #
     #######################
@@ -78,8 +77,7 @@ def elbo_to_bpd(elbo, img_shape):
     #######################
     # PUT YOUR CODE HERE  #
     #######################
-    bpd = None
-    raise NotImplementedError
+    bpd = elbo / (np.log(2) * np.prod(img_shape[1:])) # prod gives total number of dimensions
     #######################
     # END OF YOUR CODE    #
     #######################
@@ -110,8 +108,16 @@ def visualize_manifold(decoder, grid_size=20):
     #######################
     # PUT YOUR CODE HERE  #
     #######################
-    img_grid = None
-    raise NotImplementedError
+    decoder.eval()
+    with torch.no_grad():
+        #percentiles = torch.linspace(0.5 / grid_size, (grid_size - 0.5) / grid_size, grid_size)
+        #dist = torch.distributions.Normal(0, 1)
+        #z_values = dist.icdf(percentiles)
+        z_samples = torch.randn(grid_size, 2).to(decoder.device) # sample latent vectors 
+        generated_logits = decoder(z_samples) # generate grid_size**2 images
+        generated_images = torch.softmax(generated_logits) # softmax
+
+    img_grid = make_grid(generated_images, nrow=grid_size**2, normalize=True, value_range=(-1,1))
     #######################
     # END OF YOUR CODE    #
     #######################

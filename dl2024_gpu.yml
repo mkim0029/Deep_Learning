@@ -1,4 +1,4 @@
-name: dl2024
+name: ML
 channels:
   - pytorch
   - nvidia

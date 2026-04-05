@@ -1,0 +1,17 @@
+Staging inputs to local storage: /localscratch/minjihk.58849704.0/vae_train
+Starting VAE training at Sat Apr  4 20:15:40 EDT 2026
+PROJECT_ROOT=/lustre06/project/6016730/minjihk/uvadlc_practicals_2024/assignment3
+DATA(src)=/lustre06/project/6016730/minjihk/uvadlc_practicals_2024/assignment3/../data
+DATA(local)=/localscratch/minjihk.58849704.0/vae_train/data
+VAE_LOG_DIR(src)=/lustre06/project/6016730/minjihk/uvadlc_practicals_2024/assignment3/vae_logs
+VAE_LOG_DIR(local)=/localscratch/minjihk.58849704.0/vae_train/vae_logs
+[INFO] The progress bar has been suppressed. For updates on the training progress, check the TensorBoard file at /localscratch/minjihk.58849704.0/vae_train/vae_logs/lightning_logs/version_58849704. If you want to see the progress bar, use the argparse option "progress_bar".
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+       Test metric             DataLoader 0
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+        test_bpd            0.5178766846656799
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Syncing logs/checkpoints back to persistent storage: /lustre06/project/6016730/minjihk/uvadlc_practicals_2024/assignment3/vae_logs
+Job finished at Sat Apr  4 20:44:09 EDT 2026.
+Total execution time: 0h 28m 26s
