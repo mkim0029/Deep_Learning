@@ -12,14 +12,13 @@
 
 set -euo pipefail
 
-# Resolve project root robustly on Slurm nodes
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$SCRIPT_DIR"
-
-cd "$PROJECT_ROOT"
-
 source /home/minjihk/scratch/ML/bin/activate
 
+# Use the directory from which sbatch was called
+PROJECT_ROOT="${SLURM_SUBMIT_DIR:-$PWD}"
+cd "$PROJECT_ROOT"
+
+# Keep logs on shared storage under your project
 GPT2_LOG_DIR="${GPT2_LOG_DIR:-$PROJECT_ROOT/gpt2_logs}"
 ASSETS_DIR="${ASSETS_DIR:-$PROJECT_ROOT/assets}"
 TXT_FILE="${TXT_FILE:-$ASSETS_DIR/book_EN_grimms_fairy_tales.txt}"
