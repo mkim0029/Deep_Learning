@@ -1,6 +1,9 @@
 # Assignment 2, Part 2: Micro-GPT
 
-This folder contains the template code for implementing your own GPT2 model. This corresponds to Question .. to .. in the assignment. We will train the model to predict next characters. The code is structured in the following way:
+This folder contains the template code for implementing your own GPT2 model. We will train the model to predict next characters. 
+* Some text that can be used to train the model is stored in `assets` folder. Refer to TXT_FILE variable in `train_GPT2.sh` to see which one was used to train the current GPT2 model. 
+
+The code is structured in the following way:
 
 * `dataset.py`: Contains the implementation of the character-level text dataset and tokenizer. It includes:
   - `CharTokenizer`: A class that handles conversion between characters and indices, with methods for encoding text to indices and decoding indices back to text.
@@ -13,8 +16,23 @@ This folder contains the template code for implementing your own GPT2 model. Thi
   - Performance options (flash attention, precision, model compilation (torch.compile))
 * `train.py`: Contains the training implementation for the GPT model using PyTorch Lightning. It handles model training, evaluation, text generation during training, and supports both training from scratch and fine-tuning pretrained models. The code uses TensorBoard for logging and includes standard training optimizations like gradient clipping and precision options.
 
-A lot of code is already provided to you. Try to familiarize yourself with the code structure before starting your implementation. 
-Your task is to fill in the missing code pieces (indicated by `raise NotImplementedError` or comments in the code guiding you through the implementation). The main missing pieces are:
+Additional material that I added:
+* `train_GPT2.sh`: Slurm job script to used train the GPT2 model, on Narval. Output log can be found in `GPT2_*.out` 
+* `gpt2_logs`: Contains checkpoints and test results.
+* `gpt2_result_analysis.ipynb`: Notebook to help verify whether training/testing succeeded and how well the GPT2 performed. It checks:
+  - ...
+
+A lot of code is already provided. Your task is to fill in the missing code pieces, indicated by comment blocks:
+```python 
+#######################
+# PUT YOUR CODE HERE  #
+#######################
+your_code = ...
+#######################
+# END OF YOUR CODE    #
+#######################
+``` 
+The main missing pieces are:
 
 * In `gpt.py`, you need to implement several key components:
 
