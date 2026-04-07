@@ -67,7 +67,7 @@ echo "VAE_LOG_DIR(local)=$VAE_LOG_DIR_LOCAL"
 
 START_TIME=$(date +%s)
 
-python "$PROJECT_ROOT/part1/train_pl.py" \
+python "$PROJECT_ROOT/train_pl.py" \
   --z_dim 20 \
   --num_filters 32 \
   --lr 1e-3 \
