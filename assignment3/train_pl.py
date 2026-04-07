@@ -70,12 +70,18 @@ class VAE(pl.LightningModule):
         #######################
         # PUT YOUR CODE HERE  #
         #######################
-        mean, log_std = self.encoder(imgs)
-        z = sample_reparameterize(mean, log_std.exp())
-        recon_logits = self.decoder(z)
+        # encoder maps input to latent space that follows std gaussian distibution
+        mean, log_std = self.encoder(imgs) 
+        # z = mu + std * epsilon; allows backprop through random sampling
+        z = sample_reparameterize(mean, log_std.exp()) 
+        # decoder maps latent vector z back to image space; outputs logits for each pixel intensity
+        recon_logits = self.decoder(z) 
 
+        # reconstruction Loss (-ve log likelihood): measure how well the decoder recreated the input
         L_rec = F.cross_entropy(recon_logits, imgs.squeeze(1), reduction='none').sum(dim=[1, 2]).mean()
+        # regularization Loss: Penalise the latent distribution for deviating from N(0, 1)
         L_reg = KLD(mean, log_std).mean()
+        # Bits Per Dimension: normalise the total loss (ELBO) by the number of pixels and convert to base-2.
         bpd = elbo_to_bpd(L_rec + L_reg, imgs.shape)
         #######################
         # END OF YOUR CODE    #
@@ -94,10 +100,18 @@ class VAE(pl.LightningModule):
         #######################
         # PUT YOUR CODE HERE  #
         #######################
+        # 1. sample random noise from the 'prior' distribution
         latent_vectors = torch.randn(batch_size, self.hparams.z_dim, device=self.device)
+        # 2. pass the sample to decoder
         logits = self.decoder(latent_vectors)
+        # 3. rearrange for categorical sampling
         pixel_logits = logits.permute(0, 2, 3, 1).reshape(-1, logits.shape[1])
+        # 4. sample a specific pixel intensity (0-15) from the predicted probability distribution
+        # picks an intensity based on the weights the decoder provided, rather than most likely all the time
+        # plain argmax is not differentiable
         x_samples = torch.distributions.Categorical(logits=pixel_logits).sample()
+        # 5. reshape back into image format [B, C, H, W] 
+        # and convert floating points to long, torch.int64, for 4-bit indexing.
         x_samples = x_samples.view(batch_size, 1, logits.shape[2], logits.shape[3]).long()
         #######################
         # END OF YOUR CODE    #
