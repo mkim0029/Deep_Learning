@@ -38,10 +38,13 @@ class CNNEncoder(nn.Module):
         #######################
         # PUT YOUR CODE HERE  #
         #######################
-        super().__init__()
         act_fn = nn.GELU # same as Tutorial 9
         self.net = nn.Sequential(
             nn.Conv2d(num_input_channels, num_filters, kernel_size=3, padding=1, stride=2), # 32x32 -> 16x16
+            # output height = (32 + 2*1 - (3-1) -1)/2 + 1 = 15 (rounded down) + 1 = 16
+            # output width same
+            # assuming dilation = 1, space between kernel elements
+
             act_fn(),
             nn.Conv2d(num_filters, num_filters, kernel_size=3, padding=1), # 16x16
             act_fn(),
@@ -52,7 +55,7 @@ class CNNEncoder(nn.Module):
             nn.Conv2d(2*num_filters, 2*num_filters, kernel_size=3, padding=1, stride=2), # 8x8 --> 4x4
             act_fn(),
             nn.Flatten(),
-            nn.Linear(2*16*num_filters, z_dim*2) # to split into mean and log_std
+            nn.Linear(2*16*num_filters, z_dim*2) # split into mean and log_std later
         )
         #######################
         # END OF YOUR CODE    #
@@ -72,6 +75,8 @@ class CNNEncoder(nn.Module):
         # PUT YOUR CODE HERE  #
         #######################
         output = self.net(x)
+        # let first half of the neurons in the last linear layer to learn to predict the mean
+        # and the second half learn to predict the log variance
         mean, log_std = torch.chunk(output, 2, dim=-1)
         #######################
         # END OF YOUR CODE    #
@@ -98,15 +103,23 @@ class CNNDecoder(nn.Module):
         #######################
         # PUT YOUR CODE HERE  #
         #######################
-        super().__init__()
         act_fn = nn.GELU # same as Tutorial 9
+        # prepare to reshape latent vectors into image grid
         self.linear = nn.Sequential(
             nn.Linear(z_dim, 2*16*num_filters),
             act_fn()
-        )
+        ) # output shape: [Batch, 2 * 16 * num_filters]
+
         self.net = nn.Sequential(
+            # upsample
+            # input shape: [Batch, 2*num_filters, 4, 4], reshaped in forward
             nn.ConvTranspose2d(2*num_filters, 2*num_filters, kernel_size=3, output_padding=0, padding=1, stride=2), # 4x4 -> 7x7
+            # output height = (4-1)*2 - 2*1 + (3-1) + 1 = 7
+            # output width same
+            # assuming dilation = 1, space between kernel elements
+
             act_fn(),
+            # refine before upsampling again
             nn.Conv2d(2*num_filters, 2*num_filters, kernel_size=3, padding=1), # 7x7
             act_fn(),
             nn.ConvTranspose2d(2*num_filters, num_filters, kernel_size=4, padding=1, stride=2), # 7x7 -> 14x14
@@ -114,7 +127,7 @@ class CNNDecoder(nn.Module):
             nn.Conv2d(num_filters, num_filters, kernel_size=3, padding=1), # 14x14
             act_fn(),
             nn.ConvTranspose2d(num_filters, num_input_channels, kernel_size=4, padding=1, stride=2), # 14x14 -> 28x28
-        )
+        ) # output shape :[Batch, num_input_channels, 28, 28]
         #######################
         # END OF YOUR CODE    #
         #######################
@@ -132,9 +145,9 @@ class CNNDecoder(nn.Module):
         #######################
         # PUT YOUR CODE HERE  #
         ####################### unsure
-        x = self.linear(z)
-        x = x.reshape(x.shape[0], -1, 4, 4)
-        x = self.net(x)
+        x = self.linear(z) # shape: [Batch, 2 * 16 * num_filters]
+        x = x.reshape(x.shape[0], -1, 4, 4) # shape: [Batch, 2*num_filters, 4, 4], 4-bit images
+        x = self.net(x) # shape: [B, num_input_channels, 28, 28]
         #######################
         # END OF YOUR CODE    #
         #######################
