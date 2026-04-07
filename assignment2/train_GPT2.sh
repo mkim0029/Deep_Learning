@@ -46,7 +46,6 @@ python "$PROJECT_ROOT/train.py" \
   --txt_file "$TXT_FILE" \
   --log_dir "$GPT2_LOG_DIR" \
   --use_flash_attn \
-  --compile \
   --num_epochs 5
 
 END_TIME=$(date +%s)
