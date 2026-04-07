@@ -20,7 +20,9 @@ Additional material that I added:
 * `train_GPT2.sh`: Slurm job script to used train the GPT2 model, on Narval. Output log can be found in `GPT2_*.out` 
 * `gpt2_logs`: Contains checkpoints and test results.
 * `gpt2_result_analysis.ipynb`: Notebook to help verify whether training/testing succeeded and how well the GPT2 performed. It checks:
-  - ...
+  - run metadata and saved hyperparameters from `gpt2_logs/gpt-mini/version_0/hparams.yaml`
+  - scalar training curves from TensorBoard event logs (e.g., `train_loss` and `train_acc` tags)
+  - qualitative inference results by loading the trained checkpoint and generating text with greedy and nucleus sampling
 
 A lot of code is already provided. Your task is to fill in the missing code pieces, indicated by comment blocks:
 ```python 

@@ -544,34 +544,34 @@ class GPT(nn.Module):
             #######################
             # PUT YOUR CODE HERE  #
             #######################
-            if not do_sample:
-                # take the most likely token
-                logits = self.forward(idx_cond) # (batch size, sequence length, vocab size)
-                idx_next = logits[:, -1, :].argmax(dim=-1, keepdim=True) # find the index of the most likely token at the last position
-                idx_next = idx_next / temperature # scale by temperature before applying softmax
-    
-            else:
-                # apply softmax to convert logits to (normalized) probabilities
-                logits = self.forward(idx_cond) # (batch size, sequence length, vocab size)
-                logits = logits[:, -1, :] / temperature # take the logits at the final step and scale by temperature
-                probs = F.softmax(logits, dim=-1) # convert to probabilities
-                # optionally only consider top-k logits for sampling. 
-                if top_k is not None:
-                    top_k = min(top_k, probs.size(-1))  # safety check
-                    top_k_probs, top_k_indices = torch.topk(probs, top_k) # get the top-k probabilities and their indices
-                    idx_next = torch.multinomial(top_k_probs, num_samples=1) # sample from the top-k probabilities
-                    idx_next = top_k_indices.gather(-1, idx_next) # convert back to original indices
+            logits = self.forward(idx_cond)[:, -1, :] / temperature  # (B, vocab_size)
 
-                # optionally apply top-p sampling
+            if not do_sample:
+                # Greedy decoding keeps integer token ids.
+                idx_next = torch.argmax(logits, dim=-1, keepdim=True)
+            else:
+                # optionally only consider top-k logits for sampling.
+                if top_k is not None:
+                    k = min(top_k, logits.size(-1))
+                    v, _ = torch.topk(logits, k)
+                    logits = logits.masked_fill(logits < v[:, [-1]], -float('inf'))
+
+                # optionally apply top-p (nucleus) sampling
                 if top_p is not None:
-                    sorted_logits, sorted_indices = torch.sort(probs, descending=True, dim=-1) # sort probabilities in descending order
-                    cumulative_probs = torch.cumsum(sorted_logits, dim=-1) # compute cumulative probabilities
-                    sorted_logits_to_remove = cumulative_probs > top_p # find indices where cumulative probability exceeds top_p
-                    sorted_logits_to_remove[..., 1:] = sorted_logits_to_remove[..., :-1].clone() # shift the indices to the right to keep the first token above the threshold
-                    sorted_logits_to_remove[..., 0] = 0 # ensure at least one token is kept
-                    indices_to_remove = sorted_indices[sorted_logits_to_remove] # get the original indices to remove
-                    probs[:, indices_to_remove] = 0 # set the probabilities of the removed tokens to zero
-                    idx_next = torch.multinomial(probs, num_samples=1) # sample from the remaining probabilities
+                    sorted_logits, sorted_indices = torch.sort(logits, descending=True, dim=-1)
+                    sorted_probs = F.softmax(sorted_logits, dim=-1)
+                    cumulative_probs = torch.cumsum(sorted_probs, dim=-1)
+
+                    sorted_indices_to_remove = cumulative_probs > top_p
+                    sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
+                    sorted_indices_to_remove[..., 0] = False
+
+                    indices_to_remove = torch.zeros_like(logits, dtype=torch.bool)
+                    indices_to_remove.scatter_(1, sorted_indices, sorted_indices_to_remove)
+                    logits = logits.masked_fill(indices_to_remove, -float('inf'))
+
+                probs = F.softmax(logits, dim=-1)
+                idx_next = torch.multinomial(probs, num_samples=1)
             
             # append sampled index to the running sequence and continue
             idx = torch.cat((idx, idx_next), dim=1) 
