@@ -35,8 +35,8 @@ def sample_reparameterize(mean, std):
     #######################
     # PUT YOUR CODE HERE  #
     #######################
-    eps = torch.randn_like(std)
-    z = mean + std * eps
+    eps = torch.randn_like(std) # sample from std gaussian
+    z = mean + std * eps # deterministic mean and std, from encoder
     #######################
     # END OF YOUR CODE    #
     #######################
@@ -58,6 +58,8 @@ def KLD(mean, log_std):
     #######################
     # PUT YOUR CODE HERE  #
     #######################
+    # Encoder will try to space inputs far apart so the decoder could easily tell them apart
+    # KLD will force the encoder to cluster all latent points near the center (0) with a spread of 1.
     KLD = -0.5 * torch.sum(1 + 2*log_std - mean.pow(2) -(2*log_std).exp(), dim=-1) # 2*log_std = ln(sigma^2)
     #######################
     # END OF YOUR CODE    #
@@ -77,7 +79,9 @@ def elbo_to_bpd(elbo, img_shape):
     #######################
     # PUT YOUR CODE HERE  #
     #######################
-    bpd = elbo / (np.log(2) * np.prod(img_shape[1:])) # prod gives total number of dimensions
+    bpd = elbo / (np.log(2) * np.prod(img_shape[1:])) 
+    # prod gives total number of dimensions
+    # divide by log(2) converts base e to base 2, bits
     #######################
     # END OF YOUR CODE    #
     #######################
