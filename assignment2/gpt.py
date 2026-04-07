@@ -474,9 +474,10 @@ class GPT(nn.Module):
         #######################
         # PUT YOUR CODE HERE  #
         #######################
-        logits = self.transformer.h(x)
-        logits = self.transformer.ln_f(logits)
-        logits = self.lm_head(logits)        
+        for block in self.transformer.h:
+            x = block(x)
+        x = self.transformer.ln_f(x)
+        logits = self.lm_head(x)
         #######################
         # END OF YOUR CODE    #
         #######################
