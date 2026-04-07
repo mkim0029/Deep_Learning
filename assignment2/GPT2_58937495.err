@@ -1,0 +1,29 @@
+[rank: 0] Seed set to 0
+Using 16bit Automatic Mixed Precision (AMP)
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+💡 Tip: For seamless cloud logging and experiment tracking, try installing [litlogger](https://pypi.org/project/litlogger/) to enable LitLogger, which logs metrics and artifacts automatically to the Lightning Experiments platform.
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+`weights_only` was not set, defaulting to `False`.
+/lustre07/scratch/minjihk/ML/lib/python3.13/site-packages/pytorch_lightning/utilities/_pytree.py:21: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+Finding best initial lr:   0%|          | 0/100 [00:00<?, ?it/s]Finding best initial lr:   1%|          | 1/100 [00:09<15:39,  9.49s/it]Finding best initial lr:   3%|▎         | 3/100 [00:09<04:04,  2.52s/it]Finding best initial lr:   5%|▌         | 5/100 [00:09<01:59,  1.26s/it]Finding best initial lr:   7%|▋         | 7/100 [00:09<01:10,  1.32it/s]Finding best initial lr:   9%|▉         | 9/100 [00:10<00:45,  2.01it/s]Finding best initial lr:  11%|█         | 11/100 [00:10<00:31,  2.86it/s]Finding best initial lr:  13%|█▎        | 13/100 [00:10<00:22,  3.90it/s]Finding best initial lr:  15%|█▌        | 15/100 [00:10<00:16,  5.08it/s]Finding best initial lr:  17%|█▋        | 17/100 [00:10<00:13,  6.35it/s]Finding best initial lr:  19%|█▉        | 19/100 [00:10<00:10,  7.63it/s]Finding best initial lr:  21%|██        | 21/100 [00:10<00:08,  8.86it/s]Finding best initial lr:  23%|██▎       | 23/100 [00:11<00:07, 10.00it/s]Finding best initial lr:  25%|██▌       | 25/100 [00:11<00:06, 11.00it/s]Finding best initial lr:  27%|██▋       | 27/100 [00:11<00:06, 11.76it/s]Finding best initial lr:  29%|██▉       | 29/100 [00:11<00:05, 12.32it/s]Finding best initial lr:  31%|███       | 31/100 [00:11<00:05, 12.80it/s]Finding best initial lr:  33%|███▎      | 33/100 [00:11<00:05, 13.14it/s]Finding best initial lr:  35%|███▌      | 35/100 [00:11<00:04, 13.35it/s]Finding best initial lr:  37%|███▋      | 37/100 [00:12<00:04, 13.51it/s]Finding best initial lr:  39%|███▉      | 39/100 [00:12<00:04, 13.66it/s]Finding best initial lr:  41%|████      | 41/100 [00:12<00:04, 13.74it/s]Finding best initial lr:  43%|████▎     | 43/100 [00:12<00:04, 13.76it/s]Finding best initial lr:  45%|████▌     | 45/100 [00:12<00:04, 13.74it/s]Finding best initial lr:  47%|████▋     | 47/100 [00:12<00:03, 13.82it/s]Finding best initial lr:  49%|████▉     | 49/100 [00:12<00:03, 13.89it/s]Finding best initial lr:  51%|█████     | 51/100 [00:13<00:03, 13.95it/s]Finding best initial lr:  53%|█████▎    | 53/100 [00:13<00:03, 13.94it/s]Finding best initial lr:  55%|█████▌    | 55/100 [00:13<00:03, 13.90it/s]Finding best initial lr:  57%|█████▋    | 57/100 [00:13<00:03, 13.91it/s]Finding best initial lr:  59%|█████▉    | 59/100 [00:13<00:02, 13.94it/s]Finding best initial lr:  61%|██████    | 61/100 [00:13<00:02, 13.99it/s]Finding best initial lr:  63%|██████▎   | 63/100 [00:13<00:02, 13.85it/s]Finding best initial lr:  65%|██████▌   | 65/100 [00:14<00:02, 13.94it/s]Finding best initial lr:  67%|██████▋   | 67/100 [00:14<00:02, 13.96it/s]Finding best initial lr:  69%|██████▉   | 69/100 [00:14<00:02, 13.86it/s]Finding best initial lr:  71%|███████   | 71/100 [00:14<00:02, 13.85it/s]Finding best initial lr:  73%|███████▎  | 73/100 [00:14<00:01, 13.92it/s]Finding best initial lr:  75%|███████▌  | 75/100 [00:14<00:01, 13.92it/s]Finding best initial lr:  77%|███████▋  | 77/100 [00:14<00:01, 13.97it/s]Finding best initial lr:  79%|███████▉  | 79/100 [00:15<00:01, 13.91it/s]Finding best initial lr:  81%|████████  | 81/100 [00:15<00:01, 13.98it/s]Finding best initial lr:  83%|████████▎ | 83/100 [00:15<00:01, 14.03it/s]Finding best initial lr:  85%|████████▌ | 85/100 [00:15<00:01, 14.02it/s]Finding best initial lr:  87%|████████▋ | 87/100 [00:15<00:00, 14.00it/s]Finding best initial lr:  89%|████████▉ | 89/100 [00:15<00:00, 14.02it/s]Finding best initial lr:  91%|█████████ | 91/100 [00:15<00:00, 14.02it/s]Finding best initial lr:  93%|█████████▎| 93/100 [00:16<00:00, 13.98it/s]Finding best initial lr:  95%|█████████▌| 95/100 [00:16<00:00, 13.92it/s]Finding best initial lr:  97%|█████████▋| 97/100 [00:16<00:00, 13.88it/s]Finding best initial lr:  99%|█████████▉| 99/100 [00:16<00:00, 13.98it/s]`Trainer.fit` stopped: `max_steps=100` reached.
+Finding best initial lr: 100%|██████████| 100/100 [00:16<00:00,  6.03it/s]
+Restoring states from the checkpoint path at /lustre06/project/6016730/minjihk/uvadlc_practicals_2024/assignment2/.lr_find_8a43338d-b201-4e00-8859-37eb35c4a118.ckpt
+Restored all states from the checkpoint at /lustre06/project/6016730/minjihk/uvadlc_practicals_2024/assignment2/.lr_find_8a43338d-b201-4e00-8859-37eb35c4a118.ckpt
+Learning rate set to 1.9054607179632464e-05
+/lustre07/scratch/minjihk/ML/lib/python3.13/site-packages/pytorch_lightning/utilities/model_summary/model_summary.py:242: Precision 16-mixed is not supported by the model summary.  Estimated model size in MB will not be accurate. Using 32 bits instead.
+
+  | Name  | Type | Params | Mode  | FLOPs
+-----------------------------------------------
+0 | model | GPT  | 10.8 M | train | 0    
+-----------------------------------------------
+10.8 M    Trainable params
+0         Non-trainable params
+10.8 M    Total params
+43.034    Total estimated model params size (MB)
+86        Modules in train mode
+0         Modules in eval mode
+0         Total Flops
+Restored all states from the checkpoint at /lustre06/project/6016730/minjihk/uvadlc_practicals_2024/assignment2/.lr_find_8a43338d-b201-4e00-8859-37eb35c4a118.ckpt
+SLURM auto-requeueing enabled. Setting signal handlers.
+`Trainer.fit` stopped: `max_epochs=5` reached.

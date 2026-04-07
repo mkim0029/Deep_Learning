@@ -119,22 +119,28 @@ class CausalSelfAttention(nn.Module):
         # PUT YOUR CODE HERE  #
         #######################
         # Build RoPE angles with shape (T, head_dim/2) on the same device as q/k.
+        # 1. create the position indices (0, 1, 2, ..., T-1)
         seq_pos = torch.arange(T, device=xq.device, dtype=self.inv_freq.dtype)
+        # 2. compute the angles
         inv_freq = self.inv_freq.to(xq.device)
-        freqs = torch.outer(seq_pos, inv_freq)
+        freqs = torch.outer(seq_pos, inv_freq) # shape: (T, head_dim/2)
 
-        # Broadcast to (1, 1, T, head_dim/2) for [B, n_head, T, head_dim/2].
-        pos_sin = torch.sin(freqs).unsqueeze(0).unsqueeze(0) # add batch and head dimensions
+        # 3. compute sine and cosine of these angles
+        # and broadcast to (1, 1, T, head_dim/2) for [B, n_head, T, head_dim/2].
+        pos_sin = torch.sin(freqs).unsqueeze(0).unsqueeze(0)
         pos_cos = torch.cos(freqs).unsqueeze(0).unsqueeze(0)
 
-        # Split into even/odd channels and apply 2D rotation per pair.
+        # 4. split into even/odd channels (even and odd indices)
         xq_even, xq_odd = xq[..., 0::2], xq[..., 1::2] 
         xk_even, xk_odd = xk[..., 0::2], xk[..., 1::2]
 
+        # 5. apply the 2D rotation matrix:
+        # [ x_even ]   [ cos  -sin ] [ x_even ]
+        # [ x_odd  ] = [ sin   cos ] [ x_odd  ]
         xq_rot = torch.stack(
             [xq_even * pos_cos - xq_odd * pos_sin, xq_even * pos_sin + xq_odd * pos_cos],
             dim=-1,
-        ).flatten(-2)
+        ).flatten(-2) # combine the even/odd pairs back into the original head_dim
         xk_rot = torch.stack(
             [xk_even * pos_cos - xk_odd * pos_sin, xk_even * pos_sin + xk_odd * pos_cos],
             dim=-1,
@@ -171,19 +177,30 @@ class CausalSelfAttention(nn.Module):
         #######################
         # PUT YOUR CODE HERE  #
         #######################
-        if self.use_flash_attn:
+        if self.use_flash_attn: 
+            # fuse the scaling, masking, and softmax into a single GPU kernel
+            # significantly reducing memory read/writes and speeding up the forward pass
             y = F.scaled_dot_product_attention(q, k, v, attn_mask=None,
                 dropout_p=self.attn_dropout.p if self.training else 0.0,
                 is_causal=True
             )
             att = None
-        else:
-            # Compute attention scores
+        else: # classic implementation:
+            # Compute attention scores using dot product 
+            # scaled by 1/sqrt(dk) to prevent gradients from vanishing during softmax 
             att = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.size(-1))) # (B, nh, T, T)
-            # Apply causal mask
+
+            # Apply causal mask 
+            # set future tokens to -inf so they become 0 after softmax
+            # and prevent the model from cheating by looking at the next words in the sequence
             att = att.masked_fill(self.mask[:,:,:T,:T] == 0, float('-inf'))
+
+            # Get probabilities, sum up to 1
             att = F.softmax(att, dim=-1)
+
+            # Regularisation
             att = self.attn_dropout(att)
+            
             # Apply attention to the values
             y = att @ v # (B, nh, T, T) x (B, nh, T, hs) -> (B, nh, T, hs)
         #######################
